@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: app-job-rsync
+spec:
+  template:
+    spec:
+      containers:
+      - name: init
+        image: google/cloud-sdk
+        command:
+        - /bin/sh
+        - -c
+        - |
+          gsutil rsync gs://your-gcs-bucket /data/input
+        volumeMounts:
+        - name: gce-persistent-disk
+          mountPath: /data/input
+      volumes:
+      - name: gce-persistent-disk
+        gcePersistentDisk:
+          pdName: your-persistent-disk-name
+  backoffLimit: 0
